@@ -1,0 +1,162 @@
+#!/bin/bash
+#case 
+if [[ $1 != "--help" && $1 != "-vs" && $1 != "" ]]
+then
+    echo "progen: invalid option -- '$1'"
+    echo "Try 'progen --help' for more information"
+    exit 2
+elif [[ $1 == "--help" ]]
+then
+    echo "Usage: progen [option]"
+    echo "if [option] is not specified, progen will ask you only for the project name and the project language"
+    echo "Generate a new project environment for the user"
+    echo "Option '--help' can be used to get information about progen"
+    echo "Option '-vs' can be used to start a new project with a vscode environment"
+    echo ""
+    echo "Exit status:"
+    echo " 0 if OK,"
+    echo " 1 if minor problems (e.g., directory already exist),"
+    echo " 2 if serious trouble (e.g., cannot access command-line argument)."
+    exit 0
+fi
+if [ $# -gt 1 ]
+then
+    if [[ $1 == "-vs" && $2 == "--help" ]]
+    then
+        echo "progen -vs can be used to start a new project with a vscode environment"
+    else
+        if [[ $1 != "-vs" && $2 != "--help" ]]
+        then
+            echo "progen: invalid option -- '$1 $2'"
+            echo "Try 'progen --help' for more information"
+        elif [[ $1 != "-vs" ]]
+        then
+            echo "progen: invalid option -- '$1'"
+            echo "Try 'progen --help' for more information"
+        elif [[ $2 != "--help" ]]
+        then
+            echo "progen: invalid option -- '$2'"
+            echo "Try 'progen --help' for more information"
+        fi
+    fi
+else
+    # Demander le nom du projet
+    read -p "Nom du projet : " nom_projet
+
+    if [ -d $nom_projet ]
+    then
+        echo "Le répertoire $nom_projet existe déjà"
+        exit 1
+    fi
+
+    # Demander le langage du projet
+    read -p "Langage du projet (py, js, c, cpp, html, go) : " langage_projet
+
+    # Créer un répertoire pour le projet
+    mkdir $nom_projet
+    cd $nom_projet
+
+    case $langage_projet in
+    py) 
+        sudo apt-get install python3 python3-pip -y > /dev/null
+        python3 -m venv env
+        ;;
+    js)
+        sudo apt install nodejs npm -y > /dev/null
+        npm init -y > /dev/null
+        mkdir src
+        touch src/index.js
+        ;;
+    c)
+        mkdir src
+        touch src/main.c
+        ;;
+    cpp)
+        mkdir src
+        touch src/main.cpp
+        ;;
+    html)
+        touch index.html
+        mkdir style
+        ;;
+    go)
+        mkdir src
+        touch src/main.go
+        ;;
+    esac
+
+    # Installer les dépendances
+    if [ $langage_projet == "js" ]
+    then
+        npm install > /dev/null
+    fi
+
+    # Créer la structure de fichiers
+    case $langage_projet in
+    py)
+        mkdir src
+        touch main.py
+        echo "#!/usr/bin/env python" > src/main.py
+        echo "" >> src/main.py
+        echo "def main():" >> src/main.py
+        echo "    # Code du programme" >> src/main.py
+        echo "" >> src/main.py
+        echo "if __name__ == '__main__':" >> src/main.py
+        echo "    main()" >> src/main.py
+        touch requirements.txt
+        touch README.md
+    ;;
+    js)
+        echo "#!/usr/bin/env js" > src/index.js
+        echo "" >> src/index.js
+        echo "function main() {" >> src/index.js
+        echo "    // Code du programme" >> src/index.js
+        echo "}" >> src/index.js
+        echo "" >> src/index.js
+        echo "if (require.main === module) {" >> src/index.js
+        echo "    main();" >> src/index.js
+        echo "}" >> src/index.js
+        touch package.json
+        touch README.md
+    ;;
+    c)
+        echo "#include <stdio.h>" > src/main.c
+        echo "" >> src/main.c
+        echo "int main() {" >> src/main.c
+        echo "    // Code du programme" >> src/main.c
+        echo "    return 0;" >> src/main.c
+        echo "}" >> src/main.c
+        touch Makefile
+        touch README.md
+    ;;
+    cpp)
+        echo "#include <iostream>" > src/main.cpp
+        echo "" >> src/main.cpp
+        echo "int main() {" >> src/main.cpp
+        echo "    // Code du programme" >> src/main.cpp
+        echo "    return 0;" >> src/main.cpp
+        echo "}" >> src/main.cpp
+        touch Makefile
+        touch README.md
+    ;;
+    html)
+        touch README.md
+    ;;
+    go)
+        echo "package main" > src/main.go
+        echo "" >> src/main.go
+        echo "func main() {" >> src/main.go
+        echo "    // Code du programme" >> src/main.go
+        echo "}" >> src/main.go
+        touch README.md
+    ;;
+    esac
+
+    # Lancer le projet si l'utilisateur utilise vscode
+    if [[ $1 == "-vs" ]]
+    then
+        code ./
+    else 
+        echo "votre environement de travail pour le projet $nom_projet a été créer avec succes"
+    fi
+fi
