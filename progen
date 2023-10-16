@@ -1,5 +1,12 @@
 #!/bin/bash
-#case 
+# verification de si l'utilisateur est root
+if ! [ "$(id -u)" -eq 0 ]
+then
+    echo "progen: you must be root to run this program"
+    exit 2
+fi
+
+# menu d'aide
 if [[ $1 != "--help" && $1 != "-vs" && $1 != "" ]]
 then
     echo "progen: invalid option -- '$1'"
@@ -10,6 +17,7 @@ then
     echo "Usage: progen [option]"
     echo "if [option] is not specified, progen will ask you only for the project name and the project language"
     echo "Generate a new project environment for the user"
+    echo "this program use sudo to install some dependencies"
     echo "Option '--help' can be used to get information about progen"
     echo "Option '-vs' can be used to start a new project with a vscode environment"
     echo ""
@@ -17,6 +25,7 @@ then
     echo " 0 if OK,"
     echo " 1 if minor problems (e.g., directory already exist),"
     echo " 2 if serious trouble (e.g., cannot access command-line argument)."
+    echo " 3 if the language is not supported by progen or if the user refuse to install the language"
     exit 0
 fi
 if [ $# -gt 1 ]
@@ -41,37 +50,103 @@ then
     fi
 else
     # Demander le nom du projet
-    read -p "Nom du projet : " nom_projet
+    read -p "project name : " nom_projet
 
+    # verification de si le projet existe deja
     if [ -d $nom_projet ]
     then
-        echo "Le répertoire $nom_projet existe déjà"
+        echo "The directory $nom_projet already exist"
         exit 1
     fi
 
     # Demander le langage du projet
-    read -p "Langage du projet (py, js, c, cpp, html, go) : " langage_projet
+    read -p "project language (py, js, c, cpp, html, go) : " langage_projet
 
     # Créer un répertoire pour le projet
     mkdir $nom_projet
     cd $nom_projet
 
+    # Fonction d'installation des dépendances
     case $langage_projet in
-    py) 
-        sudo apt-get install python3 python3-pip -y > /dev/null
+    py)
+        python3 -V > /dev/null
+        if [ $? -ne 0 ]
+        then
+            read -p "an installation of python is necessary to use python do you want to install it ? (y/n) : " install_python
+            if [[ $install_python == "y" ]]
+            then
+                install python3 /usr/bin > /dev/null
+                python3 -m venv env
+            else
+                echo "an installation of python is necessary to use python"
+                echo "you can install it with the command 'sudo apt install python3 -y' or 'install python3 /usr/bin'"
+                exit 3
+            fi
+        fi
         python3 -m venv env
         ;;
     js)
-        sudo apt install nodejs npm -y > /dev/null
-        npm init -y > /dev/null
-        mkdir src
-        touch src/index.js
+        node -v > /dev/null
+        if [ $? -ne 0 ]
+        then
+            read -p "an installation of nodejs is necessary to use javascript do you want to install it ? (y/n) : " install_nodejs
+            if [[ $install_nodejs == "y" ]]
+            then
+                install nodejs /usr/bin > /dev/null
+                install npm /usr/bin > /dev/null
+                npm init -y > /dev/null
+                mkdir src
+                touch src/index.js
+            else
+                echo "an installation of nodejs is necessary to use javascript"
+                echo "you can install it with the command 'sudo apt install nodejs npm -y' or 'install nodejs /usr/bin' and 'install npm /usr/bin'"
+                exit 3
+            fi
+        else
+            npm init -y > /dev/null
+            mkdir src
+            touch src/index.js
+        fi
         ;;
     c)
-        mkdir src
-        touch src/main.c
+        gcc -v > /dev/null
+        if [ $? -ne 0 ]
+        then
+            read -p "an installation of gcc is necessary to compile C programs do you want to install it ? (y/n) : " install_gcc
+            if [[ $install_gcc == "y" ]]
+            then
+                install gcc usr/bin > /dev/null
+                mkdir src
+                touch src/main.c
+            else
+                echo "an installation of gcc is necessary to compile C programs"
+                echo "you can install it with the command 'sudo apt install gcc -y' or 'install gcc usr/bin'"
+                exit 3
+            fi
+        else
+            mkdir src
+            touch src/main.c
+        fi
         ;;
     cpp)
+        gcc -v > /dev/null
+        if [ $? -ne 0 ]
+        then
+            read -p "an installation of gcc is necessary to compile C++ programs do you want to install it ? (y/n) : " install_gcc
+            if [[ $install_gcc == "y" ]]
+            then
+                install gcc usr/bin > /dev/null
+                mkdir src
+                touch src/main.cpp
+            else
+                echo "an installation of gcc is necessary to compile C++ programs"
+                echo "you can install it with the command 'sudo apt install gcc -y' or 'install gcc usr/bin'"
+                exit 3
+            fi
+        else
+            mkdir src
+            touch src/main.cpp
+        fi
         mkdir src
         touch src/main.cpp
         ;;
@@ -80,9 +155,22 @@ else
         mkdir style
         ;;
     go)
-        mkdir src
-        touch src/main.go
+        go version > /dev/null
+        if [ $? -ne 0 ]
+        then
+            mkdir src
+            touch src/main.go
+            echo "an installation of go is necessary to use go"
+            echo "you can install it with the command 'sudo apt install golang-go -y'"
+        else
+            mkdir src
+            touch src/main.go
+        fi
         ;;
+    *)
+        echo "this language is not supported by progen try another version of progen or another language"
+        echo "you can make a request by email to 'nicolas.galmiche@ynov.com' or by discord to 'zephied'."
+        exit 3
     esac
 
     # Installer les dépendances
@@ -99,7 +187,7 @@ else
         echo "#!/usr/bin/env python" > src/main.py
         echo "" >> src/main.py
         echo "def main():" >> src/main.py
-        echo "    # Code du programme" >> src/main.py
+        echo "    # put your code here" >> src/main.py
         echo "" >> src/main.py
         echo "if __name__ == '__main__':" >> src/main.py
         echo "    main()" >> src/main.py
@@ -110,7 +198,7 @@ else
         echo "#!/usr/bin/env js" > src/index.js
         echo "" >> src/index.js
         echo "function main() {" >> src/index.js
-        echo "    // Code du programme" >> src/index.js
+        echo "    // put your code here" >> src/index.js
         echo "}" >> src/index.js
         echo "" >> src/index.js
         echo "if (require.main === module) {" >> src/index.js
@@ -123,7 +211,7 @@ else
         echo "#include <stdio.h>" > src/main.c
         echo "" >> src/main.c
         echo "int main() {" >> src/main.c
-        echo "    // Code du programme" >> src/main.c
+        echo "    // put your code here" >> src/main.c
         echo "    return 0;" >> src/main.c
         echo "}" >> src/main.c
         touch Makefile
@@ -133,7 +221,7 @@ else
         echo "#include <iostream>" > src/main.cpp
         echo "" >> src/main.cpp
         echo "int main() {" >> src/main.cpp
-        echo "    // Code du programme" >> src/main.cpp
+        echo "    // put your code here" >> src/main.cpp
         echo "    return 0;" >> src/main.cpp
         echo "}" >> src/main.cpp
         touch Makefile
@@ -146,7 +234,7 @@ else
         echo "package main" > src/main.go
         echo "" >> src/main.go
         echo "func main() {" >> src/main.go
-        echo "    // Code du programme" >> src/main.go
+        echo "    // put your code here" >> src/main.go
         echo "}" >> src/main.go
         touch README.md
     ;;
@@ -157,6 +245,6 @@ else
     then
         code ./
     else 
-        echo "votre environement de travail pour le projet $nom_projet a été créer avec succes"
+        echo "your project is ready to use at the path '$(pwd)'"
     fi
 fi
