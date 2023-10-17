@@ -11,18 +11,24 @@ cp Progen/progen /usr/bin/progen
 
 ## Usage
 
+```bash
 progen use sudo to install depedencies
 progen [option]
 
 if no option is given, progen will ask you only for the project name and the project language"
+```
 
 ### Options
 
+```bash
 --help: Display help
 
 -vs: start visual studio code after project creation
+```
 
 ### exit codes
+
+```bash
 0: success
 
 1: minor error
@@ -30,8 +36,12 @@ if no option is given, progen will ask you only for the project name and the pro
 2: major error
 
 3: if language is not supported
+```
 
 ## Contact
+
+```bash
 email: nicolas.galmiche@ynov.com
 
 discord id: zephied
+```
