@@ -1,10 +1,4 @@
 #!/bin/bash
-# verification de si l'utilisateur est root
-if ! [ "$(id -u)" -eq 0 ]
-then
-    echo "progen: you must be root to run this program"
-    exit 2
-fi
 
 # menu d'aide
 if [[ $1 != "--help" && $1 != "-vs" && $1 != "" ]]
@@ -17,7 +11,7 @@ then
     echo "Usage: progen [option]"
     echo "if [option] is not specified, progen will ask you only for the project name and the project language"
     echo "Generate a new project environment for the user"
-    echo "WARNING: this program need root access to install some dependencies"
+    echo "this program use sudo to install some dependencies"
     echo "Option '--help' can be used to get information about progen"
     echo "Option '-vs' can be used to start a new project with a vscode environment"
     echo ""
@@ -75,7 +69,7 @@ else
             read -p "an installation of python is necessary to use python do you want to install it ? (y/n) : " install_python
             if [[ $install_python == "y" ]]
             then
-                apt install python3 python3-pip > /dev/null
+                sudo apt install python3 python3-pip -y > /dev/null
                 python3 -m venv env
             else
                 echo "an installation of python is necessary to use python"
@@ -92,8 +86,8 @@ else
             read -p "an installation of nodejs is necessary to use javascript do you want to install it ? (y/n) : " install_nodejs
             if [[ $install_nodejs == "y" ]]
             then
-                apt install nodejs /usr/bin > /dev/null
-                install npm /usr/bin > /dev/null
+                sudo apt install nodejs -y > /dev/null
+                sudo apt install npm -y > /dev/null
                 npm init -y > /dev/null
                 mkdir src
                 touch src/index.js
@@ -109,13 +103,13 @@ else
         fi
         ;;
     c)
-        gcc -v > /dev/null
+        gcc --version > /dev/null
         if [ $? -ne 0 ]
         then
             read -p "an installation of gcc is necessary to compile C programs do you want to install it ? (y/n) : " install_gcc
             if [[ $install_gcc == "y" ]]
             then
-                install gcc usr/bin > /dev/null
+                sudo apt install gcc -y > /dev/null
                 mkdir src
                 touch src/main.c
             else
@@ -129,13 +123,13 @@ else
         fi
         ;;
     cpp)
-        gcc -v > /dev/null
+        gcc --version > /dev/null
         if [ $? -ne 0 ]
         then
             read -p "an installation of gcc is necessary to compile C++ programs do you want to install it ? (y/n) : " install_gcc
             if [[ $install_gcc == "y" ]]
             then
-                install gcc usr/bin > /dev/null
+                sudo apt install gcc -y > /dev/null
                 mkdir src
                 touch src/main.cpp
             else
@@ -147,8 +141,6 @@ else
             mkdir src
             touch src/main.cpp
         fi
-        mkdir src
-        touch src/main.cpp
         ;;
     html)
         touch index.html
@@ -158,10 +150,17 @@ else
         go version > /dev/null
         if [ $? -ne 0 ]
         then
-            mkdir src
-            touch src/main.go
-            echo "an installation of go is necessary to use go"
-            echo "you can install it with the command 'sudo apt install golang-go -y'"
+            read -p "an installation of go is necessary to use go do you want to install it ? (y/n) : " install_go
+            if [[ $install_go == "y" ]]
+            then
+                sudo apt install golang-go -y > /dev/null
+                mkdir src
+                touch src/main.go
+            else
+                echo "an installation of go is necessary to use go"
+                echo "you can install it with the command 'sudo apt install golang-go -y'"
+                exit 3
+            fi
         else
             mkdir src
             touch src/main.go
