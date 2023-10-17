@@ -17,7 +17,6 @@ if no option is given, progen will ask you only for the project name and the pro
 ### Options
 
 --help: Display help
-
 -vs: start visual studio code after project creation
 
 ### exit codes
@@ -30,5 +29,5 @@ if no option is given, progen will ask you only for the project name and the pro
 3: if language is not supported
 
 ## Contact
-email: @nicolas.galmiche@ynov.com
-discord : @zephied
+-[email:] (nicolas.galmiche@ynov.com)
+-[discord:] (zephied)
