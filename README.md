@@ -12,6 +12,7 @@ cp Progen/progen /usr/bin/progen
 ## Usage
 
 progen [option]
+
 if no option is given, progen will ask you only for the project name and the project language"
 
 ### Options
