@@ -35,7 +35,6 @@ if no option is given, progen will ask you only for the project name and the pro
 
 ## Contact
 
-```
 email: nicolas.galmiche@ynov.com
+
 discord id: zephied
-```
