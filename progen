@@ -17,6 +17,7 @@ then
     echo "Usage: progen [option]"
     echo "if [option] is not specified, progen will ask you only for the project name and the project language"
     echo "Generate a new project environment for the user"
+    echo "WARNING: this program need root access to install some dependencies"
     echo "Option '--help' can be used to get information about progen"
     echo "Option '-vs' can be used to start a new project with a vscode environment"
     echo ""
@@ -74,7 +75,7 @@ else
             read -p "an installation of python is necessary to use python do you want to install it ? (y/n) : " install_python
             if [[ $install_python == "y" ]]
             then
-                install python3 /usr/bin > /dev/null
+                apt install python3 python3-pip > /dev/null
                 python3 -m venv env
             else
                 echo "an installation of python is necessary to use python"
@@ -91,7 +92,7 @@ else
             read -p "an installation of nodejs is necessary to use javascript do you want to install it ? (y/n) : " install_nodejs
             if [[ $install_nodejs == "y" ]]
             then
-                install nodejs /usr/bin > /dev/null
+                apt install nodejs /usr/bin > /dev/null
                 install npm /usr/bin > /dev/null
                 npm init -y > /dev/null
                 mkdir src
