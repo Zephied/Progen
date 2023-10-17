@@ -17,6 +17,7 @@ if no option is given, progen will ask you only for the project name and the pro
 ### Options
 
 --help: Display help
+
 -vs: start visual studio code after project creation
 
 ### exit codes
