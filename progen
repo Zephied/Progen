@@ -12,6 +12,7 @@ then
     echo "if [option] is not specified, progen will ask you only for the project name and the project language"
     echo "Generate a new project environment for the user"
     echo "this program use sudo to install some dependencies"
+    echo ""
     echo "Option '--help' can be used to get information about progen"
     echo "Option '-vs' can be used to start a new project with a vscode environment"
     echo ""
@@ -56,10 +57,36 @@ else
     # Demander le langage du projet
     read -p "project language (py, js, c, cpp, html, go) : " langage_projet
 
-    # Créer un répertoire pour le projet
-    mkdir $nom_projet
-    cd $nom_projet
-
+    case $langage_projet in
+    py)
+        mkdir $nom_projet
+        cd $nom_projet
+        ;;
+    js)
+        mkdir $nom_projet
+        cd $nom_projet
+        ;;
+    c)
+        mkdir $nom_projet
+        cd $nom_projet
+        ;;
+    cpp)
+        mkdir $nom_projet
+        cd $nom_projet
+        ;;
+    html)
+        mkdir $nom_projet
+        cd $nom_projet
+        ;;
+    go)
+        mkdir $nom_projet
+        cd $nom_projet
+        ;;
+    *)
+        echo "this language is not supported by progen try another version of progen or another language"
+        echo "you can make a request by email to 'nicolas.galmiche@ynov.com' or by discord to 'zephied'."
+        exit 3
+    esac
     # Fonction d'installation des dépendances
     case $langage_projet in
     py)
