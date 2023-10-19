@@ -8,7 +8,7 @@ install the last release on https://github.com/Zephied/Progen/releases
 for linux users get the .tar file
 ```bash
 tar -xf Progen-1.0.tar.gz
-cp progen /bin/progen
+cp Progen-1.0/progen /bin/progen
 ```
 
 ## Usage
