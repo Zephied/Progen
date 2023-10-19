@@ -1,5 +1,18 @@
 #!/bin/bash
 
+#fonction de selection de langage
+function select_langage {
+    local PS3="$1"
+    shift
+    select opt in "$@"
+    do
+        if [[ -n $opt ]]; then
+            echo "$opt"
+            break
+        fi
+    done
+}
+
 # menu d'aide
 if [[ $1 != "--help" && $1 != "-vs" && $1 != "" ]]
 then
@@ -55,30 +68,10 @@ else
     fi
 
     # Demander le langage du projet
-    read -p "project language (py, js, c, cpp, html, go) : " langage_projet
+    langage_projet=$(select_langage "project language :" "py" "js" "c" "cpp" "html" "go")
 
     case $langage_projet in
-    py)
-        mkdir $nom_projet
-        cd $nom_projet
-        ;;
-    js)
-        mkdir $nom_projet
-        cd $nom_projet
-        ;;
-    c)
-        mkdir $nom_projet
-        cd $nom_projet
-        ;;
-    cpp)
-        mkdir $nom_projet
-        cd $nom_projet
-        ;;
-    html)
-        mkdir $nom_projet
-        cd $nom_projet
-        ;;
-    go)
+    py|js|c|cpp|html|go)
         mkdir $nom_projet
         cd $nom_projet
         ;;
