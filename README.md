@@ -4,10 +4,10 @@ Progen is a simple tool for linux to generate project skeletons from templates.
 
 ## Installation
 
-```
+```bash
 install the last release on https://github.com/Zephied/Progen/releases
 for linux users get the .tar file
-tar -xf [archive].tar (-C [dir])
+tar -xf progen-1.0.tar.gz
 cp progen /bin/progen
 ```
 
